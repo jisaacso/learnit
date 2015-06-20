@@ -1,0 +1,130 @@
+To run, make sure you have python (2.7) and virtualenv
+in your PATH
+
+./run.sh <trainFilePath> <testFilePath>
+
+NOTE: this will install a virtualenv with dependencies
+the first time it is run. This may take a few minutes
+and requires an internet connection.
+
+To manually install dependencies and run the code
+>> pip install -r requirements.txt
+>> cd blackbird
+>> python test.py <trainFilePath> <testFilePath>
+
+#view the output
+>> emacs predictedLabels
+
+(yes I use emacs :p)
+
+
+Brief discussion (optional):
+
+3 hours total
+1 hour playing with learners
+1 hour coding to work as requrested
+1 hour adding comments and writing this doc
+
+I used a tfidf vector space feature set with simple l2 regularized (weakly) logistic regression. I performed k-fold stratified cross validation to observe if there was overtraining. I saw a F-measure (weighted by class support) per fold averaging around 0.9. Without prior knowledge of this problem it's difficult to say whether it's diminshing returns to try and improve the F-measure. It was also worthwhile to look at the top 10 strongest (absolute value) features per class and their associated weights. This can often help to filter out methods which severly overtrain to nonsense. See Appendix below for the top 10 per class for logistic regression.
+
+I looked at both l2 and l1 regularization - l1 was typically too harsh, leading to severe under-training. I looked at ExtraTreesRandomForest in sklearn, ranging from a small forest (~10 trees) unregularized to a huge (~10000 trees) set of decision stumps (regularized to a max depth of 1). The small forests of large depth performed best, though not significantly above logistic regression. The large, shallow forests suffered from the same under-training described above. Ultimately I disgarded this approach due to large training times required. Though this is likely because sklearn's implementation of random forests is mental.
+
+Finally, I looked at pre-processing the feature matrix using TruncatedSVD (roughly, a streaming version of PCA) to reduce the dimensionality (~14k features for only ~5k labels) of this problem. As expected, as the output dimension of the TruncatedSVD decreased, performance dropped. Significant speedup with minimal hit in F1 accuracy was observed around ~100 output dimensions. However, the dataset is so small it didn't seem necessary to include in the solution.
+
+* Future Improvements:
+First, I would look to enchance the feature extraction process. My first pass would be using an embedded vector space (e.g., word2vec) slightly more intelligent than pure tfidf. It's always tricky to represent a document in word2vec space - approaches commonly include averaging or maxing per feature dimension across all words in a doc. Your documents are small enough this might be reasonable without loss of information.
+
+Second, I would look to add more data. This dataset is tiny relative to the number of output classes. I would look to either sample from a w2v space or look towards mechanical turk to build a larger labeled set.
+
+Third, I would get fancier with the learner. If it's not feasible to add more data and word2vec did not show improvements, I would start to improve the learner. This includes 1. ensemble learning across a range of learners and 2. Building out a full convolutional neural network across words. Both cases are severely prone to overtraining, especially given how few labeled data points there are. But if the goal is to maximize cross validated F-measure, both would be good.
+
+
+Appendix
+vs: 6.87972088407
+cts: 5.72581742834
+dividend: 5.08280147951
+net: 4.53896592766
+earnings: 4.42329478303
+split: 4.13553477372
+loss: 4.00577167954
+profit: 3.85498359267
+year: 3.67141380124
+record: 3.6711380878
+----------------------------------------
+vs: 5.76895548426
+cts: 4.73883713451
+dividend: 3.92371196669
+stake: 3.74056255201
+merger: 3.72524192304
+acquisition: 3.62991839434
+offer: 3.58261273974
+split: 3.42138297435
+net: 3.41200782739
+trade: 3.3835638045
+----------------------------------------
+trade: 9.76068603186
+japan: 2.87230788128
+deficit: 2.69787881207
+u: 2.63977155136
+exports: 2.3544750723
+billion: 2.13628162445
+surplus: 2.1152486731
+japanese: 2.06834057992
+vs: 1.92248794958
+ec: 1.8761888276
+----------------------------------------
+port: 3.55057821312
+shipping: 3.24042191962
+strike: 2.52696779746
+seamen: 2.21476211283
+ships: 2.18243838976
+cargo: 2.03247234433
+vessel: 1.96150305232
+canal: 1.94293601329
+vs: 1.84361587603
+union: 1.78314422888
+----------------------------------------
+grain: 5.62812455181
+certificates: 1.51171040839
+usda: 1.49787459581
+agriculture: 1.36805994663
+soviet: 1.32745921728
+crops: 1.26482044079
+vs: 1.21528611634
+tonnes: 1.19313967749
+crop: 1.18677059858
+farm: 1.03362195623
+----------------------------------------
+oil: 9.42941340071
+crude: 4.39229236411
+opec: 3.12940022278
+barrels: 2.63557975726
+refinery: 2.55373522812
+bpd: 2.44276481276
+barrel: 2.25419981045
+bbl: 2.23441810521
+vs: 2.19575494015
+petroleum: 2.04845215824
+----------------------------------------
+rate: 6.8153352226
+pct: 4.41320341198
+rates: 4.40503824331
+prime: 4.04672677076
+bank: 3.28563020555
+fed: 2.44910462357
+discount: 1.97201466706
+interest: 1.96981001314
+banks: 1.94313100795
+bundesbank: 1.91554781514
+----------------------------------------
+currency: 3.45751867107
+dollar: 3.24449744734
+money: 3.142625036
+exchange: 3.07792200722
+stg: 2.98392404828
+currencies: 2.88223818193
+bank: 2.65692728707
+fed: 2.51758332874
+market: 2.51214449017
+paris: 2.17887900013
+----------------------------------------
