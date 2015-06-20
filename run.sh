@@ -9,4 +9,5 @@ else
     source venv/bin/activate
 fi
 
-python learnit/test.py "$1" "$2"
+ECHO "Running a server at $1"
+python learnit/server.py "$1"

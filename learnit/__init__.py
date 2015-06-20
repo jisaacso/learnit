@@ -1,11 +1,11 @@
 # coding: utf-8
 """
-blackbird
+learnit
 ~~~~~~~~~~~~~~~~~~~
 multiclass classifier
 """
 
-__title__ = 'blackbird'
+__title__ = 'learnit'
 __summary__ = 'A classifier for some random text'
 
 __version__ = '0.1.0'
