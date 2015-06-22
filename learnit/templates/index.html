@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>PUT IT HERE</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css"/>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftPane" class="inline">
+	<h3>Welcome to learnit - a web app for classification!</h3>
+	<h3>{{message}}</h3>
+	<form action="/uploader" method="post" enctype="multipart/form-data">	  
+	  Input a training file (.tsv): <input type="file" name="fileName" >
+	  <div class="centered"><input type="submit" value="Submit" /></div>
+	</form>
+
+	<form action="/dataz" method="post">	  
+	  Type a test sentence: <input type="text" name="testInput" value="this movie is awesome" >
+	  <div class="centered"><input type="submit" value="Submit" /></div>
+	</form>
+      </div>
+    </div>
+  </body>
+</html>
